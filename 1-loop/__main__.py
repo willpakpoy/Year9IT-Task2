@@ -39,6 +39,7 @@ def compute():
     print(guess.get())
     print(number_to_guess) # Print the guess that the user has made, and the random number generated before.
     if guess.get() == number_to_guess: # If the user's entered number equals the number to guess, set the status to correct.
+        count_guesses.set(count_guesses.get()+1)
         status.set("Correct!")
     elif guess.get() < number_to_guess: # If the user's entered number is less than the number to guess, set the status to higher and increment the counter..
         count_guesses.set(count_guesses.get()+1)
