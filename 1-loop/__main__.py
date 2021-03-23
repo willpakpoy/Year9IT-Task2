@@ -1,5 +1,5 @@
-'''
-(C) Will Pak Poy 2021
+'''md
+© Will Pak Poy 2021
 
 
 # Pseudocode
