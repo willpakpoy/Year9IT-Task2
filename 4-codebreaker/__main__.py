@@ -38,5 +38,4 @@ def decode():
         decoded_string += alphabet[int(number)-1]
     decoded.set(decoded_string.strip())
     
-
 window.mainloop()
