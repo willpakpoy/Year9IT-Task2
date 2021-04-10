@@ -69,7 +69,7 @@ def view_home():
     Label(view_home_frame, text="Welcome to ANZ Banking.", anchor="w", justify=LEFT, font="bold").pack() # Label for the text field.
     Button(view_home_frame, text="1 - Display balance", command=lambda : view_1_display_balance()).pack() # Clicking this button runs the 'compute' function.
     Button(view_home_frame, text="2 - Withdraw funds", command=lambda : view_2_withdraw()).pack() # Clicking this button runs the 'compute' function.
-    Button(view_home_frame, text="3 - Deposit funds", command=lambda : print()).pack() # Clicking this button runs the 'compute' function.
+    Button(view_home_frame, text="3 - Deposit funds", command=lambda : view_3_deposit()).pack() # Clicking this button runs the 'compute' function.
     Button(view_home_frame, text="4 - Display transactions", command=lambda : print()).pack() # Clicking this button runs the 'compute' function.
     Button(view_home_frame, text="9 - Return card and exit", command=lambda : print()).pack() # Clicking this button runs the 'compute' function.
 
@@ -80,7 +80,7 @@ def view_1_display_balance():
     view_1_display_balance_frame = Frame(window)
     Button(view_1_display_balance_frame, text="Back", command=lambda : view_home()).grid(row=0, column=0) # Clicking this button runs the 'compute' function.
     
-    max_withdrawal_amount = 10**( int( math.log10(datastore["balance"]) ) )
+    max_withdrawal_amount = (datastore["balance"] // 10) * 10
 
     exact_balance_2dp = "{:.2f}".format(datastore["balance"])
     max_withdrawal_2dp = "{:.2f}".format(max_withdrawal_amount)
@@ -108,7 +108,7 @@ def view_2_withdraw():
     Button(view_2_withdraw_frame, text="$20", command=lambda : withdraw(20)).pack() # Clicking this button runs the 'compute' function.
     Button(view_2_withdraw_frame, text="$50", command=lambda : withdraw(50)).pack() # Clicking this button runs the 'compute' function.
     Button(view_2_withdraw_frame, text="$100", command=lambda : withdraw(100)).pack() # Clicking this button runs the 'compute' function.
-    Button(view_2_withdraw_frame, text="Other", command=lambda : view_withdraw_other_amount()).pack() # Clicking this button runs the 'compute' function.
+    Button(view_2_withdraw_frame, text="Other", command=lambda : view_withdraw_other()).pack() # Clicking this button runs the 'compute' function.
 
     def withdraw(amount):
         balance = datastore["balance"]
@@ -121,13 +121,48 @@ def view_2_withdraw():
 
     def view_withdraw_completion(status):
         clear_window()
-        view_2_withdraw_completion_frame = Frame(window)
-        Label(view_2_withdraw_completion_frame, text=status, anchor="w", justify=LEFT, font="bold").pack() # Label for the text field.
-        Button(view_2_withdraw_completion_frame, text="Return to main menu", command=lambda : view_home()).pack() # Clicking this button runs the 'compute' function.
-        view_2_withdraw_completion_frame.pack()
+        view_withdraw_completion_frame = Frame(window)
+        Label(view_withdraw_completion_frame, text=status, anchor="w", justify=LEFT, font="bold").pack() # Label for the text field.
+        Button(view_withdraw_completion_frame, text="Return to main menu", command=lambda : view_home()).pack() # Clicking this button runs the 'compute' function.
+        view_withdraw_completion_frame.pack()
+
+    def view_withdraw_other():
+        clear_window()
+        view_withdraw_other_frame = Frame(window)
+        requesting_withdrawal_amount = IntVar()
+        status = StringVar()
+        Label(view_withdraw_other_frame, text="Withdraw another amount", anchor="w", justify=LEFT, font="bold").pack() # Label for the text field
+        Entry(view_withdraw_other_frame, textvariable=requesting_withdrawal_amount).pack()
+        Button(view_withdraw_other_frame, text="Submit", command=lambda : check_other_amount(requesting_withdrawal_amount.get())).pack() # Clicking this button runs the 'compute' function.
+        Label(view_withdraw_other_frame, textvariable=status, anchor="w", justify=LEFT, font="bold").pack() # Label for the text field
+        def check_other_amount(amount):
+            if amount % 10 == 0:
+                withdraw(amount)
+            else:
+                status.set("Number must be a multiple of 10")
+        view_withdraw_other_frame.pack()
+
 
 
     view_2_withdraw_frame.pack()
+
+def view_3_deposit():
+    clear_window()
+    view_3_deposit_frame = Frame(window)
+    deposit_amount = DoubleVar()
+    status = StringVar()
+    Button(view_3_deposit_frame, text="Back", command=lambda : view_home()).pack() # Clicking this button runs the 'compute' function.
+    Label(view_3_deposit_frame, text="Please enter the amount in which you would like to deposit.", anchor="w", justify=LEFT, font="bold").pack() # Label for the text field.
+    Entry(view_3_deposit_frame, textvariable=deposit_amount).pack()
+    Button(view_3_deposit_frame, text="Submit", command=lambda : deposit_monies(deposit_amount.get())).pack() # Clicking this button runs the 'compute' function.
+    Label(view_3_deposit_frame, textvariable=status, anchor="w", justify=LEFT, font="bold").pack() # Label for the text field
+
+    def deposit_monies(amount):
+        datastore["balance"] += amount
+        datastore_save()
+        status.set(f"{amount} dollars has been deposited into your account.")
+
+    view_3_deposit_frame.pack() 
     
 view_home()
 window.mainloop()
