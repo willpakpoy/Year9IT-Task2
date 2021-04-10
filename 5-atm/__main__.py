@@ -14,11 +14,20 @@ def clear_window():
     for widget in window.winfo_children():
         widget.destroy()
     
+def serialize_sets(obj):
+    if isinstance(obj, set):
+        return list(obj)
+
+    return obj
+
 def datastore_save():
     f = open("5-atm/atm-data.json", "w")
     f.seek(0)
-    json.dump(datastore, f)
+    json.dump(datastore, f, default=serialize_sets)
 
+def log_transaction(type, amount):
+    new = {"type": type, "amount": amount}
+    datastore["transactions"].append(new)
 
 def view_pin():
     clear_window()
@@ -70,8 +79,8 @@ def view_home():
     Button(view_home_frame, text="1 - Display balance", command=lambda : view_1_display_balance()).pack() # Clicking this button runs the 'compute' function.
     Button(view_home_frame, text="2 - Withdraw funds", command=lambda : view_2_withdraw()).pack() # Clicking this button runs the 'compute' function.
     Button(view_home_frame, text="3 - Deposit funds", command=lambda : view_3_deposit()).pack() # Clicking this button runs the 'compute' function.
-    Button(view_home_frame, text="4 - Display transactions", command=lambda : print()).pack() # Clicking this button runs the 'compute' function.
-    Button(view_home_frame, text="9 - Return card and exit", command=lambda : print()).pack() # Clicking this button runs the 'compute' function.
+    Button(view_home_frame, text="4 - Display transactions", command=lambda : view_4_transactions()).pack() # Clicking this button runs the 'compute' function.
+    Button(view_home_frame, text="9 - Return card and exit", command=lambda : window.quit()).pack() # Clicking this button runs the 'compute' function.
 
     view_home_frame.pack() 
 
@@ -97,7 +106,6 @@ def view_1_display_balance():
     view_1_display_balance_frame.pack()
 
 def view_2_withdraw():
-    print("withdraw")
     clear_window()
     view_2_withdraw_frame = Frame(window)
     Button(view_2_withdraw_frame, text="Back", command=lambda : view_home()).pack() # Clicking this button runs the 'compute' function.
@@ -116,6 +124,7 @@ def view_2_withdraw():
             view_withdraw_completion("Sorry, you have insufficient funds to complete this transaction.")
         else:
             datastore["balance"] -= amount
+            log_transaction(type="withdraw", amount=amount)
             datastore_save()
             view_withdraw_completion("Thank you. Please take your cash.")
 
@@ -159,10 +168,33 @@ def view_3_deposit():
 
     def deposit_monies(amount):
         datastore["balance"] += amount
+        log_transaction(type="deposit", amount=amount)
         datastore_save()
         status.set(f"{amount} dollars has been deposited into your account.")
 
     view_3_deposit_frame.pack() 
     
+def view_4_transactions():
+    clear_window()
+    view_4_transactions_frame = Frame(window)
+    Button(view_4_transactions_frame, text="Back", command=lambda : view_home()).grid(column=0, row=0) # Clicking this button runs the 'compute' function.
+
+    Label(view_4_transactions_frame, text="Type", font="bold").grid(row=1, column=1)
+    Label(view_4_transactions_frame, text="Amount", font="bold").grid(row=1, column=2)
+
+    transactions = datastore["transactions"]
+    item_loop = 0 # we use a while loop instead of a for-loop to allow for us to access the item's index.
+
+    while item_loop < len(transactions):
+        item = transactions[item_loop]
+        amount_2dp = "{:.2f}".format(item["amount"])
+
+
+        Label(view_4_transactions_frame, text=item["type"].title(), font="bold").grid(row=item_loop+2, column=1)
+        Label(view_4_transactions_frame, text=f"${amount_2dp}", font="bold").grid(row=item_loop+2, column=2)
+
+
+        item_loop += 1
+    view_4_transactions_frame.pack()
 view_home()
 window.mainloop()
