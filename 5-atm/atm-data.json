@@ -1,0 +1,1 @@
+{"pin": 5678, "balance": 190.0, "transactions": [{"type": "deposit", "amount": 260}, {"type": "deposit", "amount": 100.0}, {"type": "withdraw", "amount": 10}, {"type": "deposit", "amount": 100.0}]}
