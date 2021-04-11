@@ -4,14 +4,13 @@
 
 # Pseudocode
 
-1. Build and generate the Tkinter window.
-2. Pick a random number
-3. Create the dynamic variables for Tkinter.
-4. On button click:
-    1. Print the two number values.
-    2. Compare the generated number to the inputted one.
-        1. If the inputted number is correct, print correct and **TD** unpack the other UI elements.
-        2. If the number is higher or lower than the generated number, increment the guesses counter and update the status variable.
+1. Ask the user the three numerical values, being counts of total, joe and jane's rounds.
+2. On submit, we run the compute function.
+    1. First, we check to ensure the total number of rounds is higher than zero.
+    2. Next, we check if Joe or Jane's number of rounds is higher than the total.
+    3. We then check if their combined number of rounds is higher than the total.
+    4. We divide the number of rounds by 2, and check if Joe or Jane's number of rounds is higher. We then alert the user accordingly through the win_status variable.
+    5. If none of the other requirements are met, we calculate how many more rounds Jane must win to win the game.
 '''
 from tkinter import *
 from random import randint
@@ -20,6 +19,7 @@ window = Tk()
 window.minsize('600', '300')
 window.title('2 - Round')
 
+# Our Tkinter bindable values.
 joe_rounds = IntVar(0) # Number of rounds Joe has won.
 jane_rounds = IntVar(0) # Number of rounds Jane has won.
 total_rounds = IntVar(0) # Number of rounds in total.
@@ -40,6 +40,7 @@ Label(window, text="Possibility for Jane to win").grid(column=0, row=8) # Label 
 Label(window, textvariable=win_status).grid(column=0, row=9) # Label for the text field.
 
 def compute():
+    # We get the numbers from our Tkinter bindable values, to allow for easier computation, and cleaner looking code.
     joe=joe_rounds.get()
     jane=jane_rounds.get()
     total=total_rounds.get()
@@ -68,10 +69,11 @@ def compute():
         win_status.set(f"Jane must win {int(jane_win_by)} more rounds to secure a win against Joe.")
         return
 
+# This code is to ensure the sizes of the individual cells in the grid layout are large enough to not appear crowded.
 col_count, row_count = window.grid_size()
 for row in range(row_count):
     window.grid_rowconfigure(row, minsize=5)
 
 window.mainloop()
 
-# TODO: comments + pseudocode
+# TODO: Move this layout code into the other three areas. 
