@@ -81,7 +81,7 @@ def view_pin_jail():
     clear_window()
     count_jail_timer = 5 # we have to make our own timer instead of using time.sleep() to prevent tkinter synchronous code blocking
     view_pin_jail_frame = Frame(window)
-    Label(view_pin_jail_frame, text="Welcome to ANZ Banking.", anchor="w", justify=LEFT, font="bold").pack() # Label for the text field.
+    Label(view_pin_jail_frame, text="Welcome to ANZ Banking.", anchor="w", justify=LEFT, font="bold").pack() 
     Label(view_pin_jail_frame, text="You have been locked out due to multiple incorrect attempts.\nPlease wait for 2 minutes.", anchor="w", justify=LEFT).pack()
     continue_button = Button(view_pin_jail_frame, text="Continue", command=lambda : view_pin_frame())
     def update_clock():
@@ -125,104 +125,116 @@ def view_1_display_balance():
     display_withdrawal = f"${max_withdrawal_2dp}"
 
     # display these values
-    Label(view_1_display_balance_frame, text="Exact Balance", anchor="w", justify=LEFT, font="bold").grid(row=1, column=0) # Label for the text field.
-    Label(view_1_display_balance_frame, text=display_balance, anchor="w", justify=LEFT, font="bold").grid(row=2, column=0) # Label for the text field.
+    Label(view_1_display_balance_frame, text="Exact Balance", anchor="w", justify=LEFT, font="bold").grid(row=1, column=0) 
+    Label(view_1_display_balance_frame, text=display_balance, anchor="w", justify=LEFT, font="bold").grid(row=2, column=0) 
 
-    Label(view_1_display_balance_frame, text="Max Withdrawal", anchor="w", justify=LEFT, font="bold").grid(row=1, column=1) # Label for the text field.
-    Label(view_1_display_balance_frame, text=display_withdrawal, anchor="w", justify=LEFT, font="bold").grid(row=2, column=1) # Label for the text field.
+    Label(view_1_display_balance_frame, text="Max Withdrawal", anchor="w", justify=LEFT, font="bold").grid(row=1, column=1) 
+    Label(view_1_display_balance_frame, text=display_withdrawal, anchor="w", justify=LEFT, font="bold").grid(row=2, column=1) 
 
     view_1_display_balance_frame.pack()
 
+# VIEW: 2. Withdraw
 def view_2_withdraw():
     clear_window()
     view_2_withdraw_frame = Frame(window)
-    Button(view_2_withdraw_frame, text="Back", command=lambda : view_home()).pack() 
+    Button(view_2_withdraw_frame, text="Back", command=lambda : view_home()).pack()  # universal back button
     
-    Label(view_2_withdraw_frame, text="Select withdrawal amount", anchor="w", justify=LEFT, font="bold").pack() # Label for the text field.
+    Label(view_2_withdraw_frame, text="Select withdrawal amount", anchor="w", justify=LEFT, font="bold").pack() # title
 
+    # let the user choose how much they would like to withdraw
     Button(view_2_withdraw_frame, text="$10", command=lambda : withdraw(10)).pack() 
     Button(view_2_withdraw_frame, text="$20", command=lambda : withdraw(20)).pack() 
     Button(view_2_withdraw_frame, text="$50", command=lambda : withdraw(50)).pack() 
     Button(view_2_withdraw_frame, text="$100", command=lambda : withdraw(100)).pack() 
-    Button(view_2_withdraw_frame, text="Other", command=lambda : view_withdraw_other()).pack() 
+    Button(view_2_withdraw_frame, text="Other", command=lambda : view_withdraw_other()).pack() # if they select this, they are sent to the "other" view.
 
+    # This function updates the user's actual balance.
     def withdraw(amount):
         balance = datastore["balance"]
-        if amount > balance:
-            view_withdraw_completion("Sorry, you have insufficient funds to complete this transaction.")
+        if amount > balance: # insufficient funds
+            view_withdraw_completion("Sorry, you have insufficient funds to complete this transaction.") # alert the user through the "completion" view.
         else:
-            datastore["balance"] -= amount
-            log_transaction(type="withdraw", amount=amount)
-            datastore_save()
-            view_withdraw_completion("Thank you. Please take your cash.")
+            datastore["balance"] -= amount # subtract the amount from the balance
+            log_transaction(type="withdraw", amount=amount) # log the transaction
+            datastore_save() # save the datastore to the JSON file
+            view_withdraw_completion("Thank you. Please take your cash.") # alert the user through the "completion" view.
 
+    # VIEW: 2. Withdraw: Completion
     def view_withdraw_completion(status):
         clear_window()
         view_withdraw_completion_frame = Frame(window)
-        Label(view_withdraw_completion_frame, text=status, anchor="w", justify=LEFT, font="bold").pack() # Label for the text field.
+        Label(view_withdraw_completion_frame, text=status, anchor="w", justify=LEFT, font="bold").pack() 
         Button(view_withdraw_completion_frame, text="Return to main menu", command=lambda : view_home()).pack() 
         view_withdraw_completion_frame.pack()
 
+    # VIEW: 2. Withdraw: Other
     def view_withdraw_other():
         clear_window()
         view_withdraw_other_frame = Frame(window)
-        requesting_withdrawal_amount = IntVar()
-        status = StringVar()
-        Label(view_withdraw_other_frame, text="Withdraw another amount", anchor="w", justify=LEFT, font="bold").pack() # Label for the text field
+        requesting_withdrawal_amount = IntVar() # the amount the user would like to withdraw
+        status = StringVar() # the status of the withdrawal
+
+        Label(view_withdraw_other_frame, text="Withdraw another amount", anchor="w", justify=LEFT, font="bold").pack() 
         Entry(view_withdraw_other_frame, textvariable=requesting_withdrawal_amount).pack()
         Button(view_withdraw_other_frame, text="Submit", command=lambda : check_other_amount(requesting_withdrawal_amount.get())).pack() 
-        Label(view_withdraw_other_frame, textvariable=status, anchor="w", justify=LEFT, font="bold").pack() # Label for the text field
+        Label(view_withdraw_other_frame, textvariable=status, anchor="w", justify=LEFT, font="bold").pack() 
+
         def check_other_amount(amount):
-            if amount % 10 == 0:
+            if amount % 10 == 0: # check if amount is a power of 10, if so pass to withdraw function to check balance and withdraw.
                 withdraw(amount)
             else:
-                status.set("Number must be a multiple of 10")
+                status.set("Number must be a multiple of 10") # alert the user that their number is not a power of 10.
         view_withdraw_other_frame.pack()
 
 
 
     view_2_withdraw_frame.pack()
 
+# VIEW: 3. Deposit
 def view_3_deposit():
     clear_window()
     view_3_deposit_frame = Frame(window)
-    deposit_amount = DoubleVar()
-    status = StringVar()
+
+    deposit_amount = DoubleVar() # the depositing amount, stored in a float.
+    status = StringVar() # the status of the deposit
+
     Button(view_3_deposit_frame, text="Back", command=lambda : view_home()).pack() 
-    Label(view_3_deposit_frame, text="Please enter the amount in which you would like to deposit.", anchor="w", justify=LEFT, font="bold").pack() # Label for the text field.
+    Label(view_3_deposit_frame, text="Please enter the amount in which you would like to deposit.", anchor="w", justify=LEFT, font="bold").pack() 
     Entry(view_3_deposit_frame, textvariable=deposit_amount).pack()
     Button(view_3_deposit_frame, text="Submit", command=lambda : deposit_monies(deposit_amount.get())).pack() 
-    Label(view_3_deposit_frame, textvariable=status, anchor="w", justify=LEFT, font="bold").pack() # Label for the text field
+    Label(view_3_deposit_frame, textvariable=status, anchor="w", justify=LEFT, font="bold").pack() 
 
     def deposit_monies(amount):
-        datastore["balance"] += amount
-        log_transaction(type="deposit", amount=amount)
-        datastore_save()
-        status.set(f"{amount} dollars has been deposited into your account.")
+        datastore["balance"] += amount # update datastore with added amount
+        log_transaction(type="deposit", amount=amount) # log the transaction
+        datastore_save() # save the datastore
+        status.set(f"{amount} dollars has been deposited into your account.") # alert the user
 
     view_3_deposit_frame.pack() 
     
+# VIEW: 4. Transactions
 def view_4_transactions():
     clear_window()
     view_4_transactions_frame = Frame(window)
-    Button(view_4_transactions_frame, text="Back", command=lambda : view_home()).grid(column=0, row=0) 
+    Button(view_4_transactions_frame, text="Back", command=lambda : view_home()).grid(column=0, row=0)  # universal back button
 
-    Label(view_4_transactions_frame, text="Type", font="bold").grid(row=1, column=1)
-    Label(view_4_transactions_frame, text="Amount", font="bold").grid(row=1, column=2)
+    Label(view_4_transactions_frame, text="Type", font="bold").grid(row=1, column=1) # column in table for type of transaction (either withdrawal or deposit)
+    Label(view_4_transactions_frame, text="Amount", font="bold").grid(row=1, column=2) # column in table for amount of money
 
-    transactions = datastore["transactions"]
-    item_loop = 0 # we use a while loop instead of a for-loop to allow for us to access the item's index.
+    transactions = datastore["transactions"] # gets the transactions from the datastore.
+    item_loop = 0 # we use a while loop instead of a for-loop to allow for us to access the item's index
 
     while item_loop < len(transactions):
-        item = transactions[item_loop]
-        amount_2dp = "{:.2f}".format(item["amount"])
+        item = transactions[item_loop] # the current item being looped over in the transactions list
+        amount_2dp = "{:.2f}".format(item["amount"]) # convert to 2dp
 
 
-        Label(view_4_transactions_frame, text=item["type"].title(), font="bold").grid(row=item_loop+2, column=1)
-        Label(view_4_transactions_frame, text=f"${amount_2dp}", font="bold").grid(row=item_loop+2, column=2)
+        Label(view_4_transactions_frame, text=item["type"].title(), font="bold").grid(row=item_loop+2, column=1) # type of transaction
+        Label(view_4_transactions_frame, text=f"${amount_2dp}", font="bold").grid(row=item_loop+2, column=2) # amount, with dollar symbol
 
 
-        item_loop += 1
+        item_loop += 1 # increment the item loop
     view_4_transactions_frame.pack()
+
 view_home()
 window.mainloop()
