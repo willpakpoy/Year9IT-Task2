@@ -3,15 +3,23 @@
 
 
 # Pseudocode
+ANCHOR: Pseudocode
 
 1. We request the user to enter their pin.
     1. If they get this wrong, they have three attempts, and then are sent to the "pin jail" for two minutes.
 2. The user is presented with a menu.
     a.  Balance
         The user has the chance to view their balance, and see their highest allowed withdrawal amount.
+        This information is pulled from the "datastore" variable, which loads it's imformation from the "atm-data.json" file.
+        The highest allowded withdrawal amount is calculated by finding the highest possible power of 10 in the balance. 
     b.  Withdrawal
         The user can "withdraw" money from their account.
-    c.  TODO: ^
+        This simply checks if the requesting withdrawal amount is less than the balance, and then if so subtracts the withdrawal amount from the balance
+        in the datastore, and then logs this transaction using the "log_transaction" function.
+        It then displays a successful completion message.
+        If the user requests to withdraw another amount not listed, we check if it is a power of 10, and then follow the steps above, but using a custom number.
+
+
 '''
 from tkinter import *
 import json
@@ -50,7 +58,7 @@ def log_transaction(type, amount):
     new = {"type": type, "amount": amount}
     datastore["transactions"].append(new)
 
-# VIEW: Pin
+# ANCHOR: Pin
 def view_pin():
     clear_window()
     view_pin_frame = Frame(window)
@@ -76,7 +84,7 @@ def view_pin():
                 view_pin_jail() # else, we send the user to the pin jail for 120 seconds.
     view_pin_frame.pack()
 
-#VIEW: Pin: Jail
+# ANCHOR: Pin: Jail
 def view_pin_jail():
     clear_window()
     count_jail_timer = 5 # we have to make our own timer instead of using time.sleep() to prevent tkinter synchronous code blocking
@@ -95,7 +103,7 @@ def view_pin_jail():
     view_pin_jail_frame.pack()
     update_clock()
 
-# VIEW: Home
+# ANCHOR: Home
 def view_home():
     clear_window()
     view_home_frame = Frame(window)
@@ -108,7 +116,7 @@ def view_home():
 
     view_home_frame.pack() 
 
-# VIEW: 1. Display Balance
+# ANCHOR: 1. Balance
 def view_1_display_balance():
     clear_window()
     view_1_display_balance_frame = Frame(window)
@@ -133,7 +141,7 @@ def view_1_display_balance():
 
     view_1_display_balance_frame.pack()
 
-# VIEW: 2. Withdraw
+# ANCHOR: 2. Withdraw
 def view_2_withdraw():
     clear_window()
     view_2_withdraw_frame = Frame(window)
@@ -159,7 +167,7 @@ def view_2_withdraw():
             datastore_save() # save the datastore to the JSON file
             view_withdraw_completion("Thank you. Please take your cash.") # alert the user through the "completion" view.
 
-    # VIEW: 2. Withdraw: Completion
+    # ANCHOR: 2.1. Withdraw: Completion
     def view_withdraw_completion(status):
         clear_window()
         view_withdraw_completion_frame = Frame(window)
@@ -167,7 +175,7 @@ def view_2_withdraw():
         Button(view_withdraw_completion_frame, text="Return to main menu", command=lambda : view_home()).pack() 
         view_withdraw_completion_frame.pack()
 
-    # VIEW: 2. Withdraw: Other
+    # ANCHOR: 2.2. Withdraw: Other
     def view_withdraw_other():
         clear_window()
         view_withdraw_other_frame = Frame(window)
@@ -190,7 +198,7 @@ def view_2_withdraw():
 
     view_2_withdraw_frame.pack()
 
-# VIEW: 3. Deposit
+# ANCHOR: 3. Deposit
 def view_3_deposit():
     clear_window()
     view_3_deposit_frame = Frame(window)
@@ -212,7 +220,7 @@ def view_3_deposit():
 
     view_3_deposit_frame.pack() 
     
-# VIEW: 4. Transactions
+# ANCHOR: 4. Transactions
 def view_4_transactions():
     clear_window()
     view_4_transactions_frame = Frame(window)
