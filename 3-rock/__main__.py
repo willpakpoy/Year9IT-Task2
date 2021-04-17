@@ -19,15 +19,11 @@ window = Tk()
 window.minsize('600', '300')
 window.title('3 - Rock')
 
-
-num_rounds = 3
-
 # Our Tkinter bindable values.
 user_chooses_text = StringVar()
 python_chooses_text = StringVar()
 winner_text = StringVar()
 
-Label(window, text=f"Number of rounds: {num_rounds}", anchor="w", justify=LEFT).grid(column=0, row=0) # Statically binds to the "num_rounds variable."
 Label(window, text=f"Please make a choice.", anchor="w", justify=LEFT).grid(column=0, row=1)
 
 # These buttons call the make_choice function with their respective choice.
@@ -52,7 +48,10 @@ def calculate_python_choice():
 
 # This function simply updates the text field.
 def declare_winner(winner):
-    winner_text.set(winner)
+    if winner == "draw":
+        winner_text.set("Draw! Play again!")
+    else:
+        winner_text.set(f"{winner.capitalize()} wins this round.")
 
 # This uses the logic of the game to determine the winner.
 def make_choice(user_choice):
@@ -84,7 +83,9 @@ def make_choice(user_choice):
             declare_winner("user")
         else:
             declare_winner("python")
-
-# TODO: Implement rounds system
+            
+col_count, row_count = window.grid_size()
+for row in range(row_count):
+    window.grid_rowconfigure(row, minsize=5)
 
 window.mainloop()

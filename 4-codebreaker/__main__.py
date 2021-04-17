@@ -64,4 +64,8 @@ def decode():
         decoded_string += alphabet[int(number)-1] # we search for the letter from the index and append the letter to tne "decoded_string" string.
     decoded.set(decoded_string.strip()) # We then set the "decoded" dynamic variable to "decoded_string".
 
+col_count, row_count = window.grid_size()
+for row in range(row_count):
+    window.grid_rowconfigure(row, minsize=5)
+    
 window.mainloop()

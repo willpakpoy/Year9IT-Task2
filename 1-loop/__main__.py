@@ -10,11 +10,14 @@
 4. On button click:
     1. Print the two number values.
     2. Compare the generated number to the inputted one.
-        1. If the inputted number is correct, print correct and TODO: unpack the other UI elements.
+        1. If the inputted number is correct, print correct and ask the user if they would like to reset.
         2. If the number is higher or lower than the generated number, increment the guesses counter and update the status variable.
 '''
 from tkinter import *
 from random import randint
+import os
+import sys
+python = sys.executable
 
 window = Tk()
 window.minsize('600', '300')
@@ -41,6 +44,8 @@ def compute():
     if guess.get() == number_to_guess: # If the user's entered number equals the number to guess, set the status to correct.
         count_guesses.set(count_guesses.get()+1)
         status.set("Correct!")
+        
+        Button(window, text="Play Again?", command=lambda : os.execl(python, python, *sys.argv)).pack() # Clicking this button runs the 'compute' function.
     elif guess.get() < number_to_guess: # If the user's entered number is less than the number to guess, set the status to higher and increment the counter..
         count_guesses.set(count_guesses.get()+1)
         status.set("Higher!")

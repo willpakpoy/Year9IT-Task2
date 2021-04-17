@@ -18,6 +18,16 @@ ANCHOR: Pseudocode
         in the datastore, and then logs this transaction using the "log_transaction" function.
         It then displays a successful completion message.
         If the user requests to withdraw another amount not listed, we check if it is a power of 10, and then follow the steps above, but using a custom number.
+    c.  Deposit
+        We ask the user the amount in which they would like to deposit into their account using a Tkinter float entry widget (meaning they can add 2dp).
+        After the user presses the submit button, we add the amount of money to their balance, and display a succesful message at the bottom.
+        When the user has finished depositing all of their money, they can return to the home using the Back button and view their total balance.
+        We log all of this using the "log_transaction" function to log the depositing, and therefore have a record of the money being deposited.
+    d.  Transactions
+        All transactions (that have been appropriately logged using the "log_transaction" function) are added into the datastore, and therefore permanently 
+        saved into JSON.
+        We pull the "transactions" attribute from the datastore and loop over each item, adding two Tkinter label widgets, one being for the type of transaction
+        (either deposit or withdrawal) and the amount of money relating to the transaction. We display these widgets using a native Tkinter grid.
 
 
 '''
@@ -245,4 +255,5 @@ def view_4_transactions():
     view_4_transactions_frame.pack()
 
 view_home()
+
 window.mainloop()
