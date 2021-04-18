@@ -85,7 +85,7 @@ def view_pin():
     def validate():
         nonlocal count_attempts_left # lets us mutate the "count_attempts_left" defined above
         if datastore["pin"] == user_entered_pin.get():
-            home() # if the pin is correct, we send the user to the home view.
+            view_home() # if the pin is correct, we send the user to the home view.
         else:
             if count_attempts_left != 1: # if their attempts are not equal to 1 (meaning they have none left)
                 count_attempts_left -= 1 # we increment the attempts amount
@@ -254,6 +254,6 @@ def view_4_transactions():
         item_loop += 1 # increment the item loop
     view_4_transactions_frame.pack()
 
-view_home()
+view_pin()
 
 window.mainloop()
