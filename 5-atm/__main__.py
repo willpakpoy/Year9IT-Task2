@@ -85,7 +85,7 @@ def view_pin():
     def validate():
         nonlocal count_attempts_left # lets us mutate the "count_attempts_left" defined above
         if datastore["pin"] == user_entered_pin.get():
-            home() # if the pin is correct, we send the user to the home view.
+            view_home() # if the pin is correct, we send the user to the home view.
         else:
             if count_attempts_left != 1: # if their attempts are not equal to 1 (meaning they have none left)
                 count_attempts_left -= 1 # we increment the attempts amount
@@ -101,18 +101,11 @@ def view_pin_jail():
     view_pin_jail_frame = Frame(window)
     Label(view_pin_jail_frame, text="Welcome to ANZ Banking.", anchor="w", justify=LEFT, font="bold").pack() 
     Label(view_pin_jail_frame, text="You have been locked out due to multiple incorrect attempts.\nPlease wait for 2 minutes.", anchor="w", justify=LEFT).pack()
-    continue_button = Button(view_pin_jail_frame, text="Continue", command=lambda : view_pin_frame())
-    def update_clock():
-        nonlocal count_jail_timer
-        if count_jail_timer > 0:
-            time.sleep(1000)
-            count_jail_timer += 1
-            update_clock()
-        else:
-            continue_button.pack()
+    continue_button = Button(view_pin_jail_frame, text="Continue", command=lambda : view_pin())
+    
+    continue_button.pack() # we just pack the continue button because we couldn't get the timer to work
     view_pin_jail_frame.pack()
-    update_clock()
-
+    
 # ANCHOR: Home
 def view_home():
     clear_window()
@@ -254,6 +247,6 @@ def view_4_transactions():
         item_loop += 1 # increment the item loop
     view_4_transactions_frame.pack()
 
-view_home()
+view_pin()
 
 window.mainloop()
